@@ -46,7 +46,7 @@ jobs:
           aws s3api head-bucket --bucket $bucket_name || exit 1
       
       - name: Terraform Apply
-        if: ${{ steps.check_bucket.outcome == 'failure' }}
+        if: ${{ steps.check_bucket.outcome != 'success' }}
         run: terraform apply -auto-approve -input=false
         working-directory: terraform-deployment
 
