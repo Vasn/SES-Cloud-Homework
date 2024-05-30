@@ -12,6 +12,10 @@ You are to create a repository using your Github account and create a new <b>pub
 
 For Task 1 in your public repository. It must contain
 
-1. URL to access your deployed website for module 1
-2. Architecture diagram for module 1
+- [x] URL to access your deployed website for module 1 (https://website-bucket-1009.s3.amazonaws.com/index.html)
+- [x] Architecture diagram for module 1
 
+## Module 1 Architecture
+[![Architecture Diagram][architecture-diagram]](https://github.com/Vasn/SES-Cloud-Homework)
+
+[architecture-diagram]: assets/Module-1-Architecture.jpg
