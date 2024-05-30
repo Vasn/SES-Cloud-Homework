@@ -60,7 +60,7 @@ jobs:
 
       - name: Upload website files to S3
         run: |
-          aws s3 sync ../ s3://website-bucket-1009 --exclude "terraform-deployment/*" --exclude ".git/*" --exclude ".github/*" --delete
+          aws s3 sync ../ s3://website-bucket-1009 --exclude "terraform-deployment/*" --exclude ".git/*" --exclude ".github/*" --exclude ".gitattributes"--delete
         working-directory: terraform-deployment
         
       - name: Terraform Destroy
