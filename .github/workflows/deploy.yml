@@ -30,14 +30,14 @@ jobs:
         working-directory: terraform-deployment
 
       - name: Validate Terraform
-      run: terraform validate
-      working-directory: terraform-deployment
+        run: terraform validate
+        working-directory: terraform-deployment
 
       - name: Check if S3 bucket exists
-      id: check_bucket
-      run: |
-        bucket_name="website-bucket-1009"
-        aws s3api head-bucket --bucket $bucket_name || exit 1
+        id: check_bucket
+        run: |
+          bucket_name="website-bucket-1009"
+          aws s3api head-bucket --bucket $bucket_name || exit 1
       
       - name: Terraform Apply
         if: ${{ steps.check_bucket.outcome == 'failure' }}
