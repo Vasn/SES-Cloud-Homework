@@ -55,7 +55,13 @@ resource "aws_s3_bucket_website_configuration" "website_config" {
 }
 
 resource "aws_s3_object" "website_files" {
-  for_each = { for file in fileset("${path.module}/../", "**") : file => file if !can(regex("^terraform-deployment($|/)", file)) && !can(regex("^(terraform-deployment|\\.git)($|/)", file)) && file != ".gitattributes" }
+  for_each = {
+    for file in fileset("${path.module}/../", "**") : file => file
+    if !can(regex("^terraform-deployment($|/)", file)) &&
+      !can(regex("^(terraform-deployment|\\.git|\\.github)($|/)", file)) &&
+      file != ".gitattributes" &&
+      file != ".gitignore"
+  }
 
   bucket = aws_s3_bucket.website.bucket
   key    = each.key
