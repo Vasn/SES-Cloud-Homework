@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -29,10 +29,26 @@ jobs:
         run: terraform init
         working-directory: terraform-deployment
 
+      - name: Validate Terraform
+      run: terraform validate
+      working-directory: terraform-deployment
+
+      - name: Check if S3 bucket exists
+      id: check_bucket
+      run: |
+        bucket_name="website-bucket-1009"
+        aws s3api head-bucket --bucket $bucket_name || exit 1
+      
       - name: Terraform Apply
+        if: ${{ steps.check_bucket.outcome == 'failure' }}
         run: terraform apply -auto-approve -input=false
         working-directory: terraform-deployment
 
       - name: Terraform Output
         run: terraform output
         working-directory: terraform-deployment
+
+      - name: Upload website files to S3
+      run: |
+        aws s3 sync ../ s3://website-bucket-1009 --exclude "terraform-deployment/*" --exclude ".git/*" --exclude ".github/*" --delete
+      working-directory: terraform-deployment
