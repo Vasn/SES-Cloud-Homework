@@ -5,6 +5,14 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    bucket         = "state-bucket-1009"
+    key            = "terraform/state"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-lock-table"  # Empty value to disable DynamoDB table for locking
+  }
+
 }
 
 # Configure the AWS Provider
