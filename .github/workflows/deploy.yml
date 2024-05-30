@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
     inputs:
       destroy:
         description: 'Destroy terraform infrastructure'
         required: false
-
 
 jobs:
   terraform:
@@ -22,7 +21,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.3.4  # outdated, but it is my desktop version used to test deployment
+          terraform_version: 1.3.4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -47,7 +46,7 @@ jobs:
 
       - name: Output Check Bucket Outcome
         run: echo 'Check Bucket Outcome: ${{ steps.check_bucket.outcome }}'
-      
+
       - name: Terraform Apply
         if: ${{ steps.check_bucket.outcome != 'success' }}
         run: terraform apply -auto-approve -input=false
