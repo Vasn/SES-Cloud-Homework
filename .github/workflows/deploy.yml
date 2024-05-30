@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      destroy:
+        description: 'Destroy terraform infrastructure'
+        required: false
+
 
 jobs:
   terraform:
@@ -51,4 +57,9 @@ jobs:
       - name: Upload website files to S3
         run: |
           aws s3 sync ../ s3://website-bucket-1009 --exclude "terraform-deployment/*" --exclude ".git/*" --exclude ".github/*" --delete
+        working-directory: terraform-deployment
+        
+      - name: Terraform Destroy
+        if: github.event_name == 'delete' || github.event_name == 'workflow_dispatch' && github.event.inputs.destroy == 'true'  # Manual trigger with 'destroy' input
+        run: terraform destroy -auto-approve
         working-directory: terraform-deployment
