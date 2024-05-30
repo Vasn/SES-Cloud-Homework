@@ -42,13 +42,15 @@ jobs:
         id: check_bucket
         run: |
           bucket_name="website-bucket-1009"
-          aws s3api head-bucket --bucket $bucket_name || exit 1
-
-      - name: Output Check Bucket Outcome
-        run: echo '${{ steps.check_bucket.outcome }}'
+          if aws s3api head-bucket --bucket $bucket_name 2>/dev/null; then
+            echo "Bucket $bucket_name exists."
+          else
+            echo "Bucket $bucket_name does not exist."
+            exit 0  # Exit with success, since bucket not found is expected
+          fi
 
       - name: Terraform Apply
-        if: ${{ steps.check_bucket.outcome != 'success' }}
+        if: ${{ steps.check_bucket.outputs.exists != 'true' }}
         run: terraform apply -auto-approve -input=false
         working-directory: terraform-deployment
 
