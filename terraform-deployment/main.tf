@@ -47,7 +47,7 @@ resource "aws_s3_bucket_website_configuration" "website_config" {
 }
 
 resource "aws_s3_object" "website_files" {
-  for_each = { for file in fileset("${path.module}/../", "**") : file => file if !can(regex("^terraform-deployment($|/)", file)) && file != ".git" }
+  for_each = { for file in fileset("${path.module}/../", "**") : file => file if !can(regex("^terraform-deployment($|/)", file)) && !can(regex("^(terraform-deployment|\\.git)($|/)", file)) && file != ".gitattributes" }
 
   bucket = aws_s3_bucket.website.bucket
   key    = each.key
@@ -67,7 +67,7 @@ resource "aws_s3_object" "website_files" {
 }
 
 resource "aws_s3_bucket_policy" "website_policy" {
-  bucket = aws_s3_bucket.website.bucket 
+  bucket = aws_s3_bucket.website.bucket
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -77,14 +77,14 @@ resource "aws_s3_bucket_policy" "website_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.website.arn}/*"  # ARN of your S3 bucket
+        Resource  = "${aws_s3_bucket.website.arn}/*" # ARN of your S3 bucket
       }
     ]
   })
 
-  depends_on = [ aws_s3_bucket_public_access_block.unblock_policy ]
+  depends_on = [aws_s3_bucket_public_access_block.unblock_policy]
 }
 
 output "website_url" {
-  value = "${aws_s3_bucket.website.bucket}.${aws_s3_bucket_website_configuration.website_config.website_domain}"
+  value = "${aws_s3_bucket.website.bucket}.${aws_s3_bucket_website_configuration.website_config.website_domain}/index.html"
 }
